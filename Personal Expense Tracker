@@ -1,0 +1,94 @@
+from IPython.core.application import IPYTHON_SUPPRESS_CONFIG_ERRORS
+exp_dict = {}
+budget_dict = {}
+expense_tracker = 1
+#print(exp_dict)
+def add_expense():
+  global expense_tracker
+  i = f"{expense_tracker}"
+  exp_date = input("Date of the expense (YYYY-MM-DD):")
+  exp_category = input("How would you categorize this expense?:")
+  exp_amt = float(input("How much did this cost? (Enter only the dollar amount. Use only numbers):"))
+  exp_desc = input("Please describe the expense:")
+  new_exp = {"Date " + i : exp_date, "Category " + i : exp_category, "Amount " + i : exp_amt, "Description " + i : exp_desc}
+  exp_dict.update(new_exp)
+  expense_tracker += 1
+def view_expenses():
+  file = open('expense_tracker.txt', 'r')
+  previous_expenses = file.read()
+  print(f"\nPrevious expenses logged:\n{previous_expenses}")
+  print("\nExpenses logged this session:\n")
+  for key, value in exp_dict.items():
+    if not exp_dict[f"{key}"]:
+      print(f"There is no value entered for {key}.")
+    else:
+      print(f"{key}: {value}")
+  print("\n")
+def budget():
+  month_of_interest = input("For which month are you budgeting?(YYYY-MM):")
+  monthly_budget = float(input("How much are you allotting for expenses this month?(Use only numbers):"))
+  new_entry = {month_of_interest : monthly_budget}
+  budget_dict.update(new_entry)
+def check_budget():
+  total_spending = 0
+  check_month = 0
+  spending_limit = 0
+  budget_month = input("For which month are you checking your budget status?(YYYY-MM):")
+  for key, value in budget_dict.items():
+    #print(key)
+    if budget_month == key:
+      check_month = 1
+      #print(budget_dict[key])
+  if check_month == 1:
+    spending_limit = float(budget_dict[budget_month])
+    #print(spending_limit)
+  elif check_month == 0:
+    print("There is no budget saved for this month!")
+    return
+  for key, value in exp_dict.items():
+    if "Amount" in key:
+      total_spending = total_spending + value
+  spending_result = spending_limit - total_spending
+  if spending_result >= 0 :
+    print(f"You have not yet surpassed your budget. You have ${spending_result} left.")
+  elif spending_result < 0 :
+    print(f"You have surpassed your budget!!")
+  #print(total_spending)
+def user_interface():
+  run_trigger = True
+  while run_trigger == True:
+    print("Welcome to the Personal Expense Tracker!")
+    print("Enter 1 to add an expense.")
+    print("Enter 2 to view expenses.")
+    print("Enter 3 to track your budget.")
+    print("Enter 4 to save your expenses to a .txt file.")
+    print("Enter 5 to save expenses and exit.")
+    print("Enter 6 to create a budget.")
+    user_choice = int(input("What would you like to do?:"))
+    if user_choice == 1:
+      add_expense()
+    if user_choice == 2:
+      view_expenses()
+    if user_choice == 3:
+      check_budget()
+    if user_choice == 4:
+      for key,value in exp_dict.items():
+        file = open('expense_tracker.txt', 'a')
+        write_a = key
+        write_b = value
+        file.write(f"{write_a} : {write_b}\n")
+        print(file)
+        file.close
+    if user_choice == 5:
+      print("Thank you for using our application.")
+      for key,value in exp_dict.items():
+        file = open('expense_tracker.txt','a')
+        write_a = key
+        write_b = value
+        file.write(f"{write_a} : {write_b}\n")
+        print(file)
+        file.close
+      run_trigger = False
+    if user_choice == 6:
+      budget()
+user_interface()

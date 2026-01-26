@@ -1,0 +1,186 @@
+from ast import Pass
+import hashlib
+un_pw={}
+user_authentication_trigger = True
+login_pass = False
+task_list = []
+def menu():
+  menu_trigger = True
+  while menu_trigger == True:
+    print("""------MENU------
+    Enter 1 to add tasks.
+    Enter 2 to view tasks.
+    Enter 3 to complete tasks.
+    Enter 4 to delete tasks.
+    Enter 5 to logout.""")
+    selection = int(input("What would you like to do?(Enter 1-5):"))
+    if selection == 1:
+      add_task()
+    if selection == 2:
+      view_tasks()
+    if selection == 3:
+      complete_tasks()
+    if selection == 4:
+      delete_tasks()
+    if selection == 5:
+      menu_trigger = False
+      return(print("Logging you out."))
+def login_register():
+  login_register_trigger = True
+  while login_register_trigger == True:
+    print("----Login or Register----" )
+    print("""Press 1 to register a new user name.
+Press 2 to login a current user.""")
+    user_choice = int(input("What would you like to do? (Enter 1 or 2):"))
+    if user_choice == 1:
+      user_authentication()
+      return
+    elif user_choice == 2:
+      user_login()
+      return
+def user_authentication():
+  global user_authentication_trigger
+  invalid_username = True
+  while user_authentication_trigger == True:
+    print("You must enter a username and password.")
+    while invalid_username == True:
+      user_name = input("Please enter a user name:")
+      i = 0
+      ii = len(un_pw)
+      for key, value in un_pw.items():
+        if f"{key}" == f"{user_name}":
+          print ("This username is already taken. Please enter another.")
+          continue
+        elif f"{key}" != f"{user_name}":
+          i += 1
+      if i == ii:
+        invalid_username = False
+
+    password = input("Please enter a password:")
+    password = hash(password)
+    un_pw[user_name]=password
+    for key,value in un_pw.items():
+      file = open('user_info.txt', 'a')
+      write_a = key
+      write_b = value
+      file.write(f"User - {key} --- {value}\n")
+      print(file)
+      file.close
+    login_register()
+    return
+def user_login():
+  global login_pass
+  login_trigger = True
+  while login_trigger == True:
+    file = open('user_info.txt', 'r')
+    content = file.readlines()
+    for j in content:
+      if 'User' in j:
+        username_password = j.split()
+        un_pw[username_password[2]] = int(username_password[4])
+    i = 0
+    ii = len(un_pw)
+    print("Please Login:")
+    user_name = input("Enter your user name:")
+    for key, value in un_pw.items():
+      if f"{user_name}" == f"{key}":
+        password = input("Please enter your password:")
+        password = hash(password)
+        if un_pw[key] == password:
+          print("Welcome!")
+          print("You have succesfully logged on.")
+          login_pass = True
+          menu()
+          return
+        else:
+          print("This password is incorrect.")
+          try_again = int(input("Would you like to try another password? Enter 1 for Yes or 2 for No:"))
+          if try_again == 2:
+            login_trigger = False
+      elif f"{user_name}" != f"{key}":
+        i += 1
+        #print("the value of i", i)
+    if i == ii:
+      print("User name not found.")
+      try_again = int(input("Would you like to try another user name? Enter 1 for Yes or 2 for No:"))
+      if try_again == 2:
+        login_trigger = False
+def add_task():
+  add_task_trigger = True
+  global task_list
+  while add_task_trigger == True:
+    task = input("Please input the task description:")
+    task_id = input("Please give your task an ID:")
+    task_status = int(input("Is this task pending or completed? (Enter 1 for pending and 2 for completed):"))
+    if task_status == 1:
+      task_status = "Pending"
+    elif task_status == 2:
+      task_status = "Completed"
+    task_list.append(task_id)
+    task_list.append(task)
+    task_list.append(task_status)
+    choice = int(input("What would you like to do?(Enter 1 to add another task. Enter 2 to return to the menu.):"))
+    if choice == 2:
+      menu()
+      return
+    mod = len(task_list)%3
+def view_tasks():
+  editor = 0
+  task_count = 1
+  for i in task_list:
+    if editor == 0:
+      print("List of Tasks:")
+    if editor % 3 == 0:
+      print(f"Task No. {task_count}:")
+      print(f"Task ID: {i}")
+    elif editor % 3 == 1:
+      print(f"Task Description: {i}")
+    elif editor % 3 == 2:
+      print(f"Task Status: {i}")
+      task_count += 1
+    editor +=1
+def complete_tasks():
+  global task_list
+  complete_task = int(input('Would you like to complete a task? (1 for Yes, 2 for No):'))
+  if complete_task == 1:
+    complete_task_trigger = True
+  elif complete_task == 2:
+    complete_task_trigger = False
+  while complete_task_trigger == True:
+    for i in range(len(task_list)):
+      #print(i)
+      if i % 3 == 0:
+        task_no = (i/3)+1
+        print(f"Task Number {task_no}:", task_list[i])
+      elif i % 3 == 1:
+        print(f"Task Description:", task_list[i])
+      elif i % 3 ==2:
+        print(f'Task Status:', task_list[i])
+    finish_task = int(input('Which task would you like to change status to complete? (Enter Task Number):'))
+    status_change = (finish_task*3) - 1
+    task_list[status_change] = "Completed"
+    complete_another = int(input("Would you like to complete another task? (Enter 1 for Yes or 2 for No):"))
+    if complete_another == 2:
+        complete_task_trigger = False
+def delete_tasks():
+  delete_tasks_trigger = True
+  while delete_tasks_trigger == True:
+    for i in range(len(task_list)):
+      if i % 3 == 0:
+        count = (i/3)+1
+        print(f"Task number {count}:", task_list[i])
+      elif i % 3 == 1:
+        print(f"Task Description:", task_list[i])
+      elif i % 3 == 2:
+        print(f"Task Status:", task_list[i])
+    delete_task = int(input("Which task would you like to delete? (Enter Task Number):"))
+    dt = (delete_task*3)-3
+    del task_list[dt+2]
+    del task_list[dt+1]
+    del task_list[dt]
+    print("Your updated task list:")
+    print(task_list)
+    delete_more = int(input('Would you like to delete another task? (Enter 1 for yes or 2 for no):'))
+    if delete_more == 2:
+      delete_tasks_trigger = False
+login_register()

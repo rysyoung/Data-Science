@@ -1,0 +1,257 @@
+############ This Function Reads the first csv file and breaks it into a list based on lines in the file ###############
+def first_csv():
+  file = open('/content/E-Systems Physical Inventory.csv', 'r')
+  values = file.readlines()
+  global first_csv_values
+  first_csv_values = []
+  for line in values:
+    # Strip the entire line first to remove newline and other leading/trailing whitespace
+    cleaned_line = line.strip()
+    processing_array = cleaned_line.split(',')
+    for item in processing_array:
+      # Additionally strip each item just in case of spaces around commas
+      first_csv_values.append(item.strip())
+  #print(len(first_csv_values))
+  # These pops assume the first 3 elements are headers for 3 columns.
+  # This is a bit fragile if the number of header elements doesn't match the column count.
+  first_csv_values.pop(0)
+  first_csv_values.pop(0)
+  first_csv_values.pop(0)
+first_csv()
+############ This Function Reads the second csv file and breaks it into a list based on lines in the file ###############
+def second_csv():
+  file = open('/content/Global LabVantage Data File.csv', 'r')
+  values = file.readlines()
+  global second_csv_values
+  second_csv_values = []
+  for line in values:
+    # Strip the entire line first to remove newline and other leading/trailing whitespace
+    cleaned_line = line.strip()
+    processing_array = cleaned_line.split(',')
+    for item in processing_array:
+      # Additionally strip each item just in case of spaces around commas
+      second_csv_values.append(item.strip())
+  #print(len(second_csv_values))
+  # These pops assume the first 3 elements are headers for 3 columns.
+  # This is a bit fragile if the number of header elements doesn't match the column count.
+  second_csv_values.pop(0)
+  second_csv_values.pop(0)
+  second_csv_values.pop(0)
+second_csv()
+
+############ This Function breaks apart the first csv (2061 lines) into more managable chunks ###############
+def divide_first_csv():
+  global first_csv_values_1
+  global first_csv_values_2
+  global first_csv_values_3
+  global first_csv_values_4
+  global first_csv_values_5
+  global first_csv_values_6
+  global first_csv_values_7
+  global first_csv_values_8
+  global first_csv_values_9
+  global first_csv_values_10
+
+  first_csv_values_1 = []
+  first_csv_values_2 = []
+  first_csv_values_3 = []
+  first_csv_values_4 = []
+  first_csv_values_5 = []
+  first_csv_values_6 = []
+  first_csv_values_7 = []
+  first_csv_values_8 = []
+  first_csv_values_9 = []
+  first_csv_values_10 = []
+
+  j = 1
+  for i in first_csv_values:
+
+    if j <= 206:
+      first_csv_values_1.append(i)
+    elif j > 206 and j <= 412:
+      first_csv_values_2.append(i)
+    elif j > 412 and j <= 618:
+      first_csv_values_3.append(i)
+    elif j > 618 and j <= 824:
+      first_csv_values_4.append(i)
+    elif j > 824 and j <= 1030:
+      first_csv_values_5.append(i)
+    elif j > 1030 and j <= 1236:
+      first_csv_values_6.append(i)
+    elif j > 1236 and j <= 1442:
+      first_csv_values_7.append(i)
+    elif j > 1442 and j <= 1648:
+      first_csv_values_8.append(i)
+    elif j > 1648 and j <= 1854:
+      first_csv_values_9.append(i)
+    elif j > 1854:
+      first_csv_values_10.append(i)
+
+    j += 1
+
+divide_first_csv()
+def levenshtein_dist():
+  array_1st_csv = []
+  choose_chunk = int(input("Which chunk of first csv would you like to calculate first? (1-10): ")) # Changed prompt for chunk 10
+
+  array_2nd_csv = second_csv_values
+
+  if choose_chunk == 1:
+    array_1st_csv = first_csv_values_1
+  elif choose_chunk == 2:
+    array_1st_csv = first_csv_values_2
+  elif choose_chunk == 3:
+    array_1st_csv = first_csv_values_3
+  elif choose_chunk == 4:
+    array_1st_csv = first_csv_values_4
+  elif choose_chunk == 5:
+    array_1st_csv = first_csv_values_5
+  elif choose_chunk == 6:
+    array_1st_csv = first_csv_values_6
+  elif choose_chunk == 7:
+    array_1st_csv = first_csv_values_7
+  elif choose_chunk == 8:
+    array_1st_csv = first_csv_values_8
+  elif choose_chunk == 9:
+    array_1st_csv = first_csv_values_9
+  elif choose_chunk == 10:
+    array_1st_csv = first_csv_values_10
+
+  first_csv_col1 = []
+  first_csv_col2 = []
+  first_csv_col3 = []
+
+  second_csv_col1 = []
+  second_csv_col2 = []
+  second_csv_col3 = []
+
+  for i in range(len(array_1st_csv)):
+    if i % 3 == 0:
+      first_csv_col1.append(array_1st_csv[i])
+    elif i % 3 == 1:
+      first_csv_col2.append(array_1st_csv[i])
+    elif i % 3 == 2:
+      first_csv_col3.append(array_1st_csv[i])
+
+  for i in range(len(array_2nd_csv)):
+    if i % 3 == 0:
+      second_csv_col1.append(array_2nd_csv[i])
+    elif i % 3 == 1:
+      second_csv_col2.append(array_2nd_csv[i])
+    elif i % 3 == 2:
+      second_csv_col3.append(array_2nd_csv[i])
+
+  # Determine the minimum length among the three first CSV columns
+  min_len_first_csv_cols = min(len(first_csv_col1), len(first_csv_col2), len(first_csv_col3))
+  # Determine the minimum length among the three second CSV columns
+  min_len_second_csv_cols = min(len(second_csv_col1), len(second_csv_col2), len(second_csv_col3))
+
+  for i in range(min_len_first_csv_cols):
+    compared_col1_1st_csv = str(first_csv_col1[i])
+    compared_col2_1st_csv = str(first_csv_col2[i])
+    compared_col3_1st_csv = str(first_csv_col3[i])
+
+    for j in range(min_len_second_csv_cols):
+      compared_col1_2nd_csv = str(second_csv_col1[j])
+      compared_col2_2nd_csv = str(second_csv_col2[j])
+      compared_col3_2nd_csv = str(second_csv_col3[j])
+
+      dp_col1 = [[0]*(len(compared_col1_2nd_csv)+1)for _ in range(len(compared_col1_1st_csv)+1)]
+      dp_col2 = [[0]*(len(compared_col2_2nd_csv)+1)for _ in range(len(compared_col2_1st_csv)+1)]
+      dp_col3 = [[0]*(len(compared_col3_2nd_csv)+1)for _ in range(len(compared_col3_1st_csv)+1)]
+
+      for ii in range(len(compared_col1_1st_csv) + 1):
+        dp_col1[ii][0] = ii #cost of deletions
+      for jj in range(len(compared_col1_2nd_csv) +1):
+        dp_col1[0][jj] = jj
+      for ii in range(len(compared_col2_1st_csv) + 1):
+        dp_col2[ii][0] = ii #cost of deletions
+      for jj in range(len(compared_col2_2nd_csv) +1):
+        dp_col2[0][jj] = jj
+      for ii in range(len(compared_col3_1st_csv) + 1):
+        dp_col3[ii][0] = ii #cost of deletions
+      for jj in range(len(compared_col3_2nd_csv) +1):
+        dp_col3[0][jj] = jj
+
+      for ii in range(1, len(compared_col1_1st_csv) + 1):
+        for jj in range(1, len(compared_col1_2nd_csv)+1):
+          if compared_col1_1st_csv[ii-1] == compared_col1_2nd_csv[jj-1]:
+            cost = 0
+          else:
+            cost = 1
+
+          dp_col1[ii][jj] = min(
+                dp_col1[ii - 1][jj] + 1,      # deletion
+                dp_col1[ii][jj - 1] + 1,      # insertion
+                dp_col1[ii - 1][jj - 1] + cost  # substitution
+            )
+
+      try:
+        similarity = 1 - (dp_col1[-1][-1]/max(len(compared_col1_1st_csv),len(compared_col1_2nd_csv)))
+      except ZeroDivisionError:
+        similarity = 0
+
+      if similarity > 0.3:
+        file = open('Similarity_Scores_Column1_ReducedScore.txt', 'a')
+        file.write(f"Col 1 Line {i} Entry (Inventory): {first_csv_col1[i]}\n")
+        file.write(f"Col 1 Line {j} Entry (Global): {second_csv_col1[j]}\n")
+        file.write(f"The similarity score is: {similarity}\n")
+        print(f"Col 1 Line {i} Entry (Inventory): {first_csv_col1[i]}")
+        print(f"Col 1 Line {j} Entry (Global): {second_csv_col1[j]}")
+        print(f"The similarity score is: {similarity}")
+
+      for ii in range(1, len(compared_col2_1st_csv) + 1):
+        for jj in range(1, len(compared_col2_2nd_csv)+1):
+          if compared_col2_1st_csv[ii-1] == compared_col2_2nd_csv[jj-1]:
+            cost = 0
+          else:
+            cost = 1
+
+          dp_col2[ii][jj] = min(
+                dp_col2[ii - 1][jj] + 1,      # deletion
+                dp_col2[ii][jj - 1] + 1,      # insertion
+                dp_col2[ii - 1][jj - 1] + cost  # substitution
+            )
+
+      try:
+        similarity = 1 - (dp_col2[-1][-1]/max(len(compared_col2_1st_csv),len(compared_col2_2nd_csv)))
+      except ZeroDivisionError:
+        similarity = 0
+
+      #if similarity > 0.5:
+        #file = open('Similarity_Scores.txt', 'a')
+        #file.write(f"Col 2 Line {i} Entry (Inventory): {first_csv_col2[i]}\n")
+        #file.write(f"Col 2 Line {j} Entry (Global): {second_csv_col2[j]}\n")
+        #file.write(f"The similarity score is: {similarity}\n")
+        #print(f"Col 2 Line {i} Entry (Inventory): {first_csv_col2[i]}")
+        #print(f"Col 2 Line {j} Entry (Global): {second_csv_col2[j]}")
+        #print(f"The similarity score is: {similarity}")
+
+      for ii in range(1, len(compared_col3_1st_csv) + 1):
+        for jj in range(1, len(compared_col3_2nd_csv)+1):
+          if compared_col3_1st_csv[ii-1] == compared_col3_2nd_csv[jj-1]:
+            cost = 0
+          else:
+            cost = 1
+
+          dp_col3[ii][jj] = min(
+                dp_col3[ii - 1][jj] + 1,      # deletion
+                dp_col3[ii][jj - 1] + 1,      # insertion
+                dp_col3[ii - 1][jj - 1] + cost  # substitution
+            )
+
+      try:
+        similarity = 1 - (dp_col3[-1][-1]/max(len(compared_col3_1st_csv),len(compared_col3_2nd_csv)))
+      except ZeroDivisionError:
+        similarity = 0
+
+      #if similarity > 0.5:
+        #file = open('Similarity_Scores.txt', 'a')
+        #file.write(f"Col 3 Line {i} Entry (Inventory): {first_csv_col3[i]}\n")
+        #file.write(f"Col 3 Line {j} Entry (Global): {second_csv_col3[j]}\n")
+        #file.write(f"The similarity score is: {similarity}\n")
+        #print(f"Col 3 Line {i} Entry (Inventory): {first_csv_col3[i]}")
+        #print(f"Col 3 Line {j} Entry (Global): {second_csv_col3[j]}")
+        #print(f"The similarity score is: {similarity}")
+
+levenshtein_dist()

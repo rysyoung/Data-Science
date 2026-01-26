@@ -1,0 +1,41 @@
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+######### read in CSV file and Assign it to a Dataframe ####################
+df= pd.DataFrame
+df = pd.read_excel('/content/Generic Inventory.xlsx')
+#print(df)
+
+############## Clean the Data ###############
+
+df.columns = [c.strip().replace(' ', '_').title() for c in df.columns]
+df['Description'] = df['Description'].astype(str).str.strip().str.title()
+df['Status'] = df['Status'].astype(str).str.strip().str.upper()
+df['Calibration'] = df['Calibration'].astype(str).str.strip().str.upper().replace('N', False).replace('Y', True)
+df['Installation_Date'] = pd.to_datetime(df['Installation_Date'])
+df['Asset_Age_Days'] = (pd.Timestamp.now() - df['Installation_Date']).dt.days
+df.drop_duplicates(subset=['Asset'], inplace=True)
+df.fillna(0, inplace=True)
+df = df.reset_index(drop=True)
+print(df.columns.tolist())
+print(df.shape)
+print(df.head(10))
+
+"""After executing the above cell, you can save your files to a specific location in your Google Drive by providing the desired path below."""
+
+# Specify the path in your Google Drive where you want to save the files.
+# For example, to save in a folder named 'Colab Notebooks', use '/content/drive/My Drive/Colab Notebooks/'
+drive_path = '/content/drive/My Drive/' # @param {type:"string"}
+
+import shutil
+
+# Copy the updated inventory file to Google Drive
+shutil.copy('/content/Updated_Inventory.xlsx', drive_path + 'Updated_Inventory.xlsx')
+
+print(f"'Updated_Inventory.xlsx' saved to {drive_path}Updated_Inventory.xlsx")
+
+############### Print into an updated Excel File #############
+
+df.to_excel('Updated_Inventory.xlsx', index=False)
